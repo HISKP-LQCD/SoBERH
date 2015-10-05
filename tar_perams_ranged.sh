@@ -4,13 +4,13 @@
 # Set the parameters
 # Lattice name
 ens=A40.24
-flv_src=A40_charm_225
-flv=charm_225
+flv_src=A40_charm_2911
+flv=charm_2911
 add=
 
-# Config range
-BGN=1914
-END=2110
+# Config ranges (these are tuples of 3 pairs)
+BGN=1714
+END=1910
 DST=4
 
 
@@ -24,8 +24,9 @@ PERM=/hiskp2/perambulators/${ens}/${flv_src}
 cd $WRK
 echo "-C$PERM" > perams_tared.txt
 for (( cfg = $BGN; cfg <= $END; cfg += $DST )); do
-  j=`printf %04d $cfg`
-	echo "cnfg$j" >> perams_tared.txt
+  #j=`printf %04d $cfg`
+	#echo "cnfg$j" >> perams_tared.txt
+	echo "cnfg$cfg" >> perams_tared.txt
 done
 #cd /hiskp2/perambulators/${ens}/${flv}
 # Now we want to tar everything in the range list into one specific tar archive
