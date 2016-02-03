@@ -4,15 +4,14 @@
 # Set the parameters
 # Lattice name
 ens=A40.24
-flv_src=A40_charm_225
-flv=charm_225
+flv_src=A40_charm_2911
+flv=charm_2911
 add=
 
 # Config range
-BGN=1914
-END=2110
+BGN=2114
+END=2330
 DST=4
-
 
 # Setting target path for archive and rsync destination
 WRK=/hiskp2/helmes/peram_vault # tar locally and then rsync to juelich archive
@@ -30,7 +29,7 @@ done
 #cd /hiskp2/perambulators/${ens}/${flv}
 # Now we want to tar everything in the range list into one specific tar archive
 SRC=perams_${BGN}-${DST}-${END}.tar
-tar cvf ${SRC} --files-from perams_tared.txt --exclude main 
+#tar cvf ${SRC} --files-from perams_tared.txt --exclude main 
 # Rsync perambulator archive to destination
 rsync  ${SRC} hch026@${HOST}:${SNC}
 # After that we should delete peram_list to generate it anew each time

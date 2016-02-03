@@ -9,8 +9,8 @@ add=
 
 # Config range as line numbers from conf_lst.txt, DST is the usual distance
 # between configs
-BGN=81
-END=109
+BGN=30
+END=58
 DST=4
 
 # get all configs in between range into one file
@@ -21,7 +21,7 @@ C1=$(sed -n 1p conf_range.txt)
 C2=$(sed -n 29p conf_range.txt)
 ## Setting target path for archive and rsync destination
 ARC=/hiskp2/helmes/eigsys_vault # tar locally and then rsync to juelich archive
-HOST=judac.fz-juelich.de
+HOST=judac
 SNC=/arch/hch02/hch026/helmes/eigensystems/${ens}
 SRC=${ARC}/eigensys_${C1}-${DST}-${C2}.tar
 ## Now we want to tar everything in the range list into one specific tar archive

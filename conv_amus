@@ -1,0 +1,27 @@
+#!/hadron/knippsch/Enthought/Canopy_64bit/User/bin/python
+
+# Script to port strange quark masses to other lattice spacings
+import sys
+
+def convert_mass(mass_A, A, B):
+  """ This function takes the mass value and two beta identifiers and translates
+  the the mass from the first to the second beta value
+  
+  Parameters:
+  -----------
+  mass_A : the valence quark mass on lattice A
+  A, B : identifiers for beta (A,B or D)
+
+  Returns:
+  --------
+  mass_B : The quark mass at the second lattice
+
+  """
+  r0 = {"A": 5.31, "B": 5.77, "D": 7.60}
+  Z_PM1 = {"A": 0.529, "B": 0.509, "D": 0.516}
+  Z_PM2 = {"A": 0.574, "B": 0.546, "D": 0.545}
+  mass_B = Z_PM2[B]/Z_PM2[A] * r0[A]/r0[B] * mass_A
+  return mass_B
+
+# Convert mass value from sysarg 2 on lattice sysarg 1 to lattice sysarg 3
+print(convert_mass(float(sys.argv[2]),sys.argv[1],sys.argv[3]))
