@@ -31,8 +31,8 @@ def cut_range(lst, rnge):
 # Lattice name
 ens_src='A40.32/'
 ens='A40.32/'
-flv_src='strange_2464/'
-flv='strange_2464/'
+flv_src='light/'
+flv='light/'
 # is backup local?
 local=True
 
@@ -45,7 +45,7 @@ SNC='/arch2/hbn28/hbn284/perambulators/'+ens+flv
 
 
 # create a list of configs to tar and check existence
-cfg_want = ['cnfg%d' % c for c in range(304,1201,4)]
+cfg_want = ['cnfg%d' % c for c in range(200,1201,4)]
 # get names
 cfg_have = os.listdir(SRC)
 # test and sort list

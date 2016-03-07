@@ -77,9 +77,9 @@ def merge_infiles(in_1, in_2):
   # remove infile in_2
 
 
-bgn, end, dst = 200, 200, 4
-fold = ['/work/hbn28/hbn284/A40.32/merge_test/up',
-'/work/hbn28/hbn284/A40.32/merge_test/light']
+bgn, end, dst = 200, 1200, 4
+fold = ['/work/hbn28/hbn284/A40.32/up',
+        '/work/hbn28/hbn284/A40.32/light']
 entry = os.getcwd()
 unwanted = ['main','get_time.py','invert.input','job.sh','job.sh2',
             'tmLQCD_parameters.out']
