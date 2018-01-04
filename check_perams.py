@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # 10.01.2017 Maximilian Oehm, Markus Werner
 # This skript checks the existance and size of perambulators and random vectors
 # generated with the sLapH method.
@@ -25,9 +27,16 @@ parser.add_argument("--nb_rnd_vec", type=int,
 
 parser.add_argument("--T", type=int, 
                     help="Time extent of the lattice", required=True)
-parser.add_argument("--dilution_scheme", 
-                     help="Dilution scheme chosen for the lattice", 
-                     required=True, choices=["20", "24", "32"])
+parser.add_argument("--nb_ev", type=int,
+                     help="Number of LapH Eigenvectors", 
+                     required=True)
+parser.add_argument("--dil_T", type=int,
+                    help="Extent of time dilution index",
+                    required=True)
+parser.add_argument("--dil_ev", type=int,
+                    help="Extent of LapH EV dilution index",
+                    required=True)
+
 parser.add_argument("--missing_config", type=int, nargs="*", default = [])
 
 args = parser.parse_args()
@@ -41,22 +50,13 @@ nb_rnd_vec = args.nb_rnd_vec
 T = args.T
 missing_cnfg = args.missing_config
 
-nb_ev = {"20" : 66, "24" : 120, "32" :220}   # number of eigenvectors
-nb_ev = nb_ev[args.dilution_scheme]
-dil_T = {"20" : 24, "24" : 24, "32" : 32}    # number of diluted blocks in time
-dil_T = dil_T[args.dilution_scheme]
-dil_ev = {"20" : 6, "24" : 6, "32" : 4}       # number of diluted blocks in ev-space
-dil_ev = dil_ev[args.dilution_scheme]
-
-nb_I_T  = {"20" : 24, "24" : 24, "32" : 32}   # number of inversions in time
-nb_I_T = nb_I_T[args.dilution_scheme]
-nb_I_EV = {"20" : 6, "24" : 6, "32" : 4}      # number of inversions in eigenvector space
-nb_I_EV = nb_I_EV[args.dilution_scheme]
-nb_I_D  = 4                                   # number of inversions in Dirac space
-
+nb_ev = args.nb_ev
+dil_T = args.dil_T
+dil_ev = args.dil_ev
+dil_D = 4
 
 ################################################################################
-peram_size = (T*nb_ev*4)*(dil_T*dil_ev*4)*(2*8) 
+peram_size = (T*nb_ev*4)*(dil_T*dil_ev*dil_D)*(2*8) 
                                      # 4: Dirac, 2: complex, 8: double precision
 rnd_vec_size = (T*nb_ev*4)*(2*8)     # 4: Dirac, 2: complex, 8: double precision
 ################################################################################
@@ -80,7 +80,8 @@ def unique(a):
   return a[ui]
 
 ################################################################################
-errors = []
+peram_errors = []
+rndvec_errors = []
 for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
   if i in missing_cnfg:
     continue
@@ -92,34 +93,38 @@ for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
     filename = path + '/perambulator.rndvecnb%02d.*' % j
     fi = glob.glob(filename)
     if(len(fi) == 0):
-      eprint('\tNo perambulator file exists in ' + path, errors, i, j)
+      eprint('\tNo perambulator file exists in ' + path, peram_errors, i, j)
     for k in fi:
       size = os.path.getsize(k)
       if(peram_size != size):
         eprint('\tSize of perambulator in ' + path + ' is not correct', \
-                                                                   errors, i, j)
+                                                                   peram_errors, i, j)
         eprint('\tsize should be %d' % peram_size + ' but is %d' % size, 
-                                                                   errors, i, j)
+                                                                   peram_errors, i, j)
 
     # checking the random vector
     filename = path + '/randomvector.rndvecnb%02d.*' % j
     fi = glob.glob(filename)
     if(len(fi) == 0):
-      eprint('\tNo randomvector file exists in ' + path, errors, i, j)
+      eprint('\tNo randomvector file exists in ' + path, rndvec_errors, i, j)
     for k in fi:
       size = os.path.getsize(k)
       if(rnd_vec_size != size):
-        eprint('\tSize of randomvector in ' + path + ' is not correct', errors, i, j)
-        eprint('\tsize should be %d' % rnd_vec_size + ' but is %d' % size, errors, i, j)
+        eprint('\tSize of randomvector in ' + path + ' is not correct', rndvec_errors, i, j)
+        eprint('\tsize should be %d' % rnd_vec_size + ' but is %d' % size, rndvec_errors, i, j)
 
-if len(errors) != 0:
+if len(peram_errors) != 0:
   print ' ' 
-  for e in errors:
+  for e in peram_errors:
     print e
+  print ' '
 
+if len(rndvec_errors) != 0:
+  for e in rndvec_errors:
+    print e
   print ' ' 
 
-  missing_cnfg = unique(zip([e[0] for e in errors], [e[1] for e in errors]))
+  missing_cnfg = unique(zip([e[0] for e in peram_errors], [e[1] for e in peram_errors]))
   np.savetxt('missing_configs.txt', missing_cnfg, fmt='%d', header='cnfg\trnd_vec', delimiter=',')
 else:
   print 'No errors'
