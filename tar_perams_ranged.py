@@ -35,6 +35,8 @@ args = parser.parse_args()
 ens = args.ens
 flv = args.flv
 
+otf = args.otf
+
 d = args.delta_config
 size = args.chunksize
 
