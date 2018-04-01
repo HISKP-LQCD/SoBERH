@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # 10.01.2017 Maximilian Oehm, Markus Werner
 # This skript checks the existance of correlation functions calculated with the
 # cntr.v0.1 contraction code
