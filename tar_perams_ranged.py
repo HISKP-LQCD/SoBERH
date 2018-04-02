@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--ens", help="Name of ensemble", required=True)
 parser.add_argument("--flv", help="Name of flavor", required=True)
 
-parser.add_argument("--otf", help="Perform rsync 'on the fly', deleting the .tar after rsync exit status 0", dest="otf", action="store_true", default=True)
+parser.add_argument("--otf", help="Perform rsync 'on the fly', deleting the .tar after rsync exit status 0", dest="otf", action="store_true", default=False)
 
 parser.add_argument("--first_config", type=int, help="Number of first gauge configuration", required=True)
 parser.add_argument("--delta_config", type=int, help="Number of first gauge configuration", required=True)
@@ -138,7 +138,7 @@ for c in chunks:
       os.remove(arcname)
 
 ## Rsync perambulator archive to destination
-if otf is True:
+if otf is False:
   for name in arclist:
     rsync_args=['rsync', name, USER+'@'+HOST+':'+SNC]
     subprocess.call(rsync_args)
