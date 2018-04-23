@@ -26,7 +26,7 @@ parser.add_argument("--HOST", help="Name of host to log onto archive (default: %
 # Setting target path for archive and tar locally 
 # and then rsync to juelich archive rsync destination
 parser.add_argument("--SRC", help="Path to data locally", required=True)
-parser.add_argument("--WRK", help="Path to archive locally (default: /hiskp2/werner/peram_vault/)")
+parser.add_argument("--WRK", help="Path to archive locally (default: /hiskp4/werner/peram_vault/)")
 parser.add_argument("--SNC", help="Path to archive remote default: /arch/hch02/hch026/LapH_perambulators/)")
 
 args = parser.parse_args()
@@ -45,7 +45,7 @@ SNC = args.SNC
 
 # Set default for WRK and SNC depending on ens and flv
 if WRK is None:
-  WRK='/hiskp2/werner/peram_vault/'+ens+'/'+flv+'/'
+  WRK='/hiskp4/werner/peram_vault/'+ens+'/'+flv+'/'
 try:
    if not os.path.exists(os.path.dirname(WRK)):
        os.makedirs(os.path.dirname(WRK))
