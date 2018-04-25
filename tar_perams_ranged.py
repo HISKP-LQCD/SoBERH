@@ -1,4 +1,4 @@
-#!/hadron/knippsch/Enthought/Canopy_64bit/User/bin/python
+#!/usr/bin/python
 
 # Small bash script to tar perambulators in packages of configurations
 import argparse
@@ -12,6 +12,8 @@ parser = argparse.ArgumentParser()
 # Set the lattice parameters
 parser.add_argument("--ens", help="Name of ensemble", required=True)
 parser.add_argument("--flv", help="Name of flavor", required=True)
+
+parser.add_argument("--otf", help="Perform rsync 'on the fly', deleting the .tar after rsync exit status 0", dest="otf", action="store_true", default=False)
 
 parser.add_argument("--first_config", type=int, help="Number of first gauge configuration", required=True)
 parser.add_argument("--delta_config", type=int, help="Number of first gauge configuration", required=True)
@@ -32,6 +34,8 @@ parser.add_argument("--SNC", help="Path to archive remote default: /arch/hch02/h
 args = parser.parse_args()
 ens = args.ens
 flv = args.flv
+
+otf = args.otf
 
 d = args.delta_config
 size = args.chunksize
@@ -61,9 +65,9 @@ cfg_want = ['cnfg%04d' % c for c in range(args.first_config, args.final_config+1
 
 # Function sorting by digits independent from length
 def natural_sort(l): 
-      convert = lambda text: int(text) if text.isdigit() else text.lower() 
-      alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
-      return sorted(l, key = alphanum_key)
+  convert = lambda text: int(text) if text.isdigit() else text.lower() 
+  alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
+  return sorted(l, key = alphanum_key)
 
 # cut a list of configuration based on indices
 def cut_range(lst, rnge):
@@ -105,24 +109,37 @@ chunks = [cfgs_tar[i:i+size] for i  in range(0, len(cfgs_tar), size)]
 EXCLUDE_FILES=['main']
 arclist = []
 for c in chunks:
-    b=c[0]
-    e=c[-1]
-    # distance in filename from interval
-    # First create a list with the according configurations
-    
-    os.chdir(SRC)
-    # Now we want to tar everything in the range list into one specific tar archive
-    arcname=WRK+'perams_' +b[4:] + '-' + str(d) + '-' +e[4:]+ '.tar'
-    if os.path.isfile(arcname) is False:
-      with tarfile.open(arcname,"w",dereference=True) as tar:
-          for name in c:
-              tar.add(name,filter=lambda x: None if x.name in EXCLUDE_FILES
-                  else x)
-    else:
-      print 'Archive already exists. Did not write!'
+  b=c[0]
+  e=c[-1]
+  # distance in filename from interval
+  # First create a list with the according configurations
+  
+  os.chdir(SRC)
+  # Now we want to tar everything in the range list into one specific tar archive
+  arcname=WRK+'perams_' +b[4:] + '-' + str(d) + '-' +e[4:]+ '.tar'
+  if os.path.isfile(arcname) is False:
+    with tarfile.open(arcname,"w",dereference=True) as tar:
+      for name in c:
+        tar.add(name,filter=lambda x: None if x.name in EXCLUDE_FILES
+            else x)
+  else:
+    print 'Archive already exists. Did not write!'
+  
+  # if "on the fly archival" is disabled, we will transfer all
+  # files in one big sweep later and not delete them 
+  if otf is False:
     arclist.append(arcname)
-# Rsync perambulator archive to destination
-for name in arclist:
-  rsync_args=['rsync', name, USER+'@'+HOST+':'+SNC]
-  subprocess.call(rsync_args)
+  else:  
+  # on the fly archival to save space
+    rsync_args=['rsync', arcname, USER+'@'+HOST+':'+SNC]
+    rval=subprocess.call(rsync_args)
+    # delete file if rsync was successful
+    if rval == 0:
+      os.remove(arcname)
+
+## Rsync perambulator archive to destination
+if otf is False:
+  for name in arclist:
+    rsync_args=['rsync', name, USER+'@'+HOST+':'+SNC]
+    subprocess.call(rsync_args)
 
