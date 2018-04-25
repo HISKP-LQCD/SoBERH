@@ -50,7 +50,7 @@ diagrams = args.diagrams
 
 # function to print error message and simultaniously save it into a list.
 def eprint(message, errors, cnfg, diagram):
-  print message
+  print(message)
   errors.append([cnfg, diagram, message])
 
 # taken from http://stackoverflow.com/questions/8560440/
@@ -75,7 +75,7 @@ for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
 
     filename = '/%s' % j + '_cnfg%04d' % i + '.h5'
 
-    print 'checking ', filename
+    print('checking {}'.format(filename))
 
     # checking for existence
     fi = glob.glob(path + filename)
@@ -91,11 +91,11 @@ for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
 #                                                                 errors, i, j)
 
 if len(errors) != 0:
-  print ' ' 
+  print(' ')
   for e in errors:
-    print e
+    print(e)
 
-  print ' ' 
+  print(' ')
 
 # TODO: repair unique function for strings in diagrams
 #  missing_cnfg = unique(zip([e[0] for e in errors], [e[1] for e in errors]))
