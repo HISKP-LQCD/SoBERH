@@ -97,9 +97,9 @@ if len(errors) != 0:
 
   print(' ')
 
-# TODO: repair unique function for strings in diagrams
-#  missing_cnfg = unique(zip([e[0] for e in errors], [e[1] for e in errors]))
+  # TODO: repair unique function for strings in diagrams
+# missing_cnfg = unique(zip([e[0] for e in errors], [e[1] for e in errors]))
+#  missing_cnfg = np.asarray(zip([e[0] for e in errors], [e[1] for e in errors]), dtype=object)
   # dtype = object necessary, because implicitely cnfg is casted to string otherwise
-  missing_cnfg = np.array(zip([e[0] for e in errors], [e[1] for e in errors]), dtype=object)
-  np.savetxt(path + '/missing_configs.txt', missing_cnfg, fmt='%d, %s', header='cnfg\tdiagram')
-
+  missing_cnfg = np.array(errors, dtype=object)[:,:2]
+  np.savetxt(path + '/missing_configs.txt', missing_cnfg, fmt='%d\t%s', header='cnfg\tdiagram')
