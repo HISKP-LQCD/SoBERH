@@ -6,6 +6,7 @@ import argparse
 
 import os, glob
 import re
+import subprocess
 
 import numpy as np
 
@@ -46,6 +47,9 @@ diagrams = args.diagrams
 ## necessary diagrams for rho calculation
 #diagrams = ["C20", "C2+", "C3+", "C4+B", "C4+D"]
 
+diagram_sizes_rho = {
+  'C20' : 1188, 'C2c' : 132, 'C3c' : 11640, 'C4cB' : 123120, 'C4cD' : 123120}
+
 ################################################################################
 
 # function to print error message and simultaniously save it into a list.
@@ -66,7 +70,7 @@ def unique(a):
   ui[1:] = (diff != 0).any(axis=1) 
   return a[ui]
 
-################################################################################
+##########################################################################################
 errors = []
 for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
   if i in missing_cnfg:
@@ -82,13 +86,11 @@ for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
     if(len(fi) == 0):
       eprint('\tNo correlator file exists for ' + j, errors, i, j)
 
-# TODO: check for correct size as well
-#    size = os.path.getsize(k)
-#    if(peram_size != size):
-#      eprint('\tSize of perambulator in ' + path + ' is not correct', \
-#                                                                 errors, i, j)
-#      eprint('\tsize should be %d' % peram_size + ' but is %d' % size, 
-#                                                                 errors, i, j)
+    # TODO: check for correct size as well
+    corr_size = diagram_sizes_rho[j]
+    stdout = subprocess.check_output(['h5stat', '-f', path + filename]).decode("utf-8")
+    if(stdout.find(str(corr_size)) == -1):
+      eprint('\tNumber of correlators in ' + path + filename + ' is not correct', errors, i, j)
 
 if len(errors) != 0:
   print(' ')
