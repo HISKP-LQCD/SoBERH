@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Small bash script to tar perambulators in packages of configurations
 import argument_parsing as ap
@@ -7,6 +7,7 @@ import sys, os, tarfile, re, subprocess
 def main():
     parser = ap.arg_parser()
     args = parser.parse_args()
+
     ens = args.ens
     flv = args.flv
 
@@ -72,12 +73,12 @@ def main():
     # Restrict cfgs_want to the subset we have and print all configurations in 
     # cfg_want but not in cfg_have
     for c in natural_sort(set(cfg_want) - set(cfg_have)):
-      print 'Skipping configuration ', c
+      print('Skipping configuration ', c)
     cfgs_cut = set(cfg_want).intersection(cfg_have)
 
     # sort intersection
     cfgs_tar = natural_sort(cfgs_cut)
-    print 'Archiving: ', cfgs_tar
+    print('Archiving: ', cfgs_tar)
 
     # chunks for taring
     chunks = [cfgs_tar[i:i+size] for i  in range(0, len(cfgs_tar), size)]
@@ -98,7 +99,7 @@ def main():
             tar.add(name,filter=lambda x: None if x.name in EXCLUDE_FILES
                 else x)
       else:
-        print 'Archive already exists. Did not write!'
+        print('Archive already exists. Did not write!')
       
       # if "on the fly archival" is disabled, we will transfer all
       # files in one big sweep later and not delete them 
