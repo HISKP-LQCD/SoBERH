@@ -99,7 +99,7 @@ def main():
 
     chunks = [configs[i:(i+chunksize)] for i in range(0, len(configs), chunksize)]
     for chunk in chunks:
-        print('Taring chunk %s' %chunk)
+        print('Packing chunk %s' %chunk)
         chunk_start = chunk[0]
         chunk_end = chunk[-1]
     
