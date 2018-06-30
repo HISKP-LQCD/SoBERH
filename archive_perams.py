@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Small bash script to tar perambulators in packages of configurations
 import argument_parsing as ap
@@ -7,31 +7,31 @@ import sys, os, tarfile, re, subprocess
 def main():
     parser = ap.arg_parser()
     args = parser.parse_args()
+
     ens = args.ens
     flv = args.flv
 
     otf = args.otf
 
     d = args.delta_config
-    size = args.chunksize
+    chunksize = args.chunksize
 
-    USER = args.USER
-    HOST = args.HOST
+    remote_user = args.remote_user
+    remote_host = args.remote_host
 
-    SRC = args.SRC
-    WRK = args.WRK
-    SNC = args.SNC
+    source_path = args.source_path
+    work_path = args.work_path
+    remote_path = args.remote_path
 
-    # Set default for WRK and SNC depending on ens and flv
-    if WRK is None:
-      WRK='/hiskp2/werner/peram_vault/'+ens+'/'+flv+'/'
+    # Set default for work_path and remote_path depending on ens and flv
+    work_path=work_path+'/'+ens+'/'+flv+'/'
     try:
-       if not os.path.exists(os.path.dirname(WRK)):
-           os.makedirs(os.path.dirname(WRK))
+       if not os.path.exists(os.path.dirname(work_path)):
+           os.makedirs(os.path.dirname(work_path))
     except OSError as err:
        print(err)
-    if SNC is None:
-      SNC='/arch/hch02/hch026/LapH_perambulators/'+ens+'/'+flv+'/'
+    
+    remote_path=remote_path+'/'+ens+'/'+flv+'/'
 
     ################################################################################
 
@@ -62,7 +62,7 @@ def main():
 
     # check wether all configurations are there
     # get names
-    cfg_have = os.listdir(SRC)
+    cfg_have = os.listdir(source_path)
     # test and sort list
     # regular expression containing "cnfg" followed by at least one int
     reg = re.compile(r'cnfg\d+')
@@ -72,15 +72,15 @@ def main():
     # Restrict cfgs_want to the subset we have and print all configurations in 
     # cfg_want but not in cfg_have
     for c in natural_sort(set(cfg_want) - set(cfg_have)):
-      print 'Skipping configuration ', c
+      print('Skipping configuration ', c)
     cfgs_cut = set(cfg_want).intersection(cfg_have)
 
     # sort intersection
     cfgs_tar = natural_sort(cfgs_cut)
-    print 'Archiving: ', cfgs_tar
+    print('Archiving: ', cfgs_tar)
 
     # chunks for taring
-    chunks = [cfgs_tar[i:i+size] for i  in range(0, len(cfgs_tar), size)]
+    chunks = [cfgs_tar[i:i+chunksize] for i  in range(0, len(cfgs_tar), chunksize)]
     EXCLUDE_FILES=['main']
     arclist = []
     for c in chunks:
@@ -89,16 +89,16 @@ def main():
       # distance in filename from interval
       # First create a list with the according configurations
       
-      os.chdir(SRC)
+      os.chdir(source_path)
       # Now we want to tar everything in the range list into one specific tar archive
-      arcname=WRK+'perams_' +b[4:] + '-' + str(d) + '-' +e[4:]+ '.tar'
+      arcname=work_path+'perams_' +b[4:] + '-' + str(d) + '-' +e[4:]+ '.tar'
       if os.path.isfile(arcname) is False:
         with tarfile.open(arcname,"w",dereference=True) as tar:
           for name in c:
             tar.add(name,filter=lambda x: None if x.name in EXCLUDE_FILES
                 else x)
       else:
-        print 'Archive already exists. Did not write!'
+        print('Archive already exists. Did not write!')
       
       # if "on the fly archival" is disabled, we will transfer all
       # files in one big sweep later and not delete them 
@@ -106,7 +106,7 @@ def main():
         arclist.append(arcname)
       else:  
       # on the fly archival to save space
-        rsync_args=['rsync', arcname, USER+'@'+HOST+':'+SNC]
+        rsync_args=['rsync', arcname, remote_user+'@'+remote_host+':'+remote_path]
         rval=subprocess.call(rsync_args)
         # delete file if rsync was successful
         if rval == 0:
@@ -115,7 +115,7 @@ def main():
     ## Rsync perambulator archive to destination
     if otf is False:
       for name in arclist:
-        rsync_args=['rsync', name, USER+'@'+HOST+':'+SNC]
+        rsync_args=['rsync', name, remote_user+'@'+remote_host+':'+remote_path]
         subprocess.call(rsync_args)
 
 if __name__ == "__main__":
