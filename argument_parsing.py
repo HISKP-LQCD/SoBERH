@@ -31,27 +31,31 @@ def arg_parser():
                         help="Number of gauge configurations per tar archive. Default: %(default)s",
                         default = 50)
 
+    
     # some arguments depend on whether we are dealing with eigensystems,
     # perambulators or contracted diagrams
-    default_vault_path = ""
-    default_remote_path = ""
-    if progname == "tar_perams_ranged.py":
+    if progname == "archive_perams.py":
         parser.add_argument("--flv", help="Name of flavour", required=True)
-        default_vault_path = "/hiskp4/peram_vault/"
-        default_remote_path = "/arch/hch02/hch026/LapH_perambulators/"
+        parser.add_argument("--work_path", 
+                            help=("Path in which the .tar files will be created locally, "
+                                  "the ensemble and flavour names will be appended. Default: %(default)s"),
+                            default="/hiskp4/peram_vault/")
+        parser.add_argument("--remote_path", 
+                            help="Remote archival path, the ensemble and flavour names will be appended. Default: %(default)s", 
+                            default="/arch/hch02/hch026/LapH_perambulators/")
 
     if progname == "archive_eigsys.py":
-        default_vault_path = "/hiskp4/eigsys_vault/"
-        default_remote_path = "/arch/hch02/hch026/helmes/eigensystems/"
+        parser.add_argument("--work_path", 
+                            help=("Path in which the .tar files will be created locally, "
+                                  "the ensemble name will be appended. Default: %(default)s"),
+                            default="/hiskp4/eigsys_vault/")
+        parser.add_argument("--remote_path", 
+                            help="Remote archival path, the ensemble name will be appended. Default: %(default)s", 
+                            default="/arch/hch02/hch026/helmes/eigensystems/")
     
     parser.add_argument("--source_path", help="Path to data locally", required=True)
-    parser.add_argument("--work_path", help=("Path in which the .tar files will be created locally, "
-                                       "the ensemble name will be appended. Default: %(default)s"),
-                        default=default_vault_path)
-
-    parser.add_argument("--remote_path", help="Remote archival path, the ensemble name will be appended. Default: %(default)s", 
-                        default=default_remote_path)
-    # Setting the login information for Jueich. Please ensure access permission
+    
+    # Setting the login information for Juelich. Please ensure access permission
     parser.add_argument("--remote_user", help="Name of user to log onto archive Default: %(default)s", default="hch026")
     parser.add_argument("--remote_host", help="Name of host to log onto archive Default: %(default)s", default="judac")
     
