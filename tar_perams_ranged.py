@@ -33,7 +33,6 @@ def main():
     if SNC is None:
       SNC='/arch/hch02/hch026/LapH_perambulators/'+ens+'/'+flv+'/'
 
-
     ################################################################################
 
     # create a list of configs to tar, add one config in the end because python
