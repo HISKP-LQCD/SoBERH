@@ -32,6 +32,10 @@ def arg_parser():
     # some arguments depend on whether we are dealing with eigensystems,
     # perambulators or contracted diagrams
     if progname == "archive_perams.py":
+        parser.add_argument("--otf", help="Perform rsync 'on the fly', deleting the .tar after rsync exit status 0",
+                            dest="otf", 
+                            action="store_true",
+                            default=False)
         parser.add_argument("--flv", help="Name of flavour", required=True)
         parser.add_argument("--work_path", 
                             help=("Path in which the .tar files will be created locally, "
@@ -59,10 +63,6 @@ def arg_parser():
     parser.add_argument("--remote_user", help="Name of user to log onto archive Default: %(default)s", default="hch026")
     parser.add_argument("--remote_host", help="Name of host to log onto archive Default: %(default)s", default="judac")
     
-    parser.add_argument("--otf", help="Perform rsync 'on the fly', deleting the .tar after rsync exit status 0",
-                        dest="otf", 
-                        action="store_true",
-                        default=False)
 
     return parser
 
