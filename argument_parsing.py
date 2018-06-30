@@ -38,11 +38,11 @@ def arg_parser():
     if progname == "tar_perams_ranged.py":
         parser.add_argument("--flv", help="Name of flavour", required=True)
         default_vault_path = "/hiskp4/peram_vault/"
-        default_remote_path = "/arch/hch026/LapH_perambulators/"
+        default_remote_path = "/arch/hch02/hch026/LapH_perambulators/"
 
     if progname == "archive_eigsys.py":
         default_vault_path = "/hiskp4/eigsys_vault/"
-        default_remote_path = "/arch/hch026/helmes/eigensystems/"
+        default_remote_path = "/arch/hch02/hch026/helmes/eigensystems/"
     
     parser.add_argument("--source_path", help="Path to data locally", required=True)
     parser.add_argument("--work_path", help=("Path in which the .tar files will be created locally, "
