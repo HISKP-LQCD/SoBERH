@@ -8,9 +8,6 @@ def arg_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--ens", help="Name of ensemble", required=True)
-    parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)
-    parser.add_argument("--Ls", type=int, help="Spatial extent of ensemble", required=True)
-    parser.add_argument("--Nev", type=int, help="Number of LapH eigenvectors per time slice", required=True)
 
     parser.add_argument("--first_config", type=int, help="Number of first gauge configuration", required=True)
     parser.add_argument("--delta_config", type=int, help="Number of  gauge configuration distance", required=True)
@@ -45,6 +42,9 @@ def arg_parser():
                             default="/arch/hch02/hch026/LapH_perambulators/")
 
     if progname == "archive_eigsys.py":
+        parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)
+        parser.add_argument("--Ls", type=int, help="Spatial extent of ensemble", required=True)
+        parser.add_argument("--Nev", type=int, help="Number of LapH eigenvectors per time slice", required=True)
         parser.add_argument("--work_path", 
                             help=("Path in which the .tar files will be created locally, "
                                   "the ensemble name will be appended. Default: %(default)s"),
