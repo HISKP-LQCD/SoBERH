@@ -32,7 +32,6 @@ def main():
     args = parser.parse_args()
     ens = args.ens
 
-    otf = args.otf
     chunksize = args.chunksize
 
     remote_user = args.remote_user
