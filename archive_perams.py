@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 # Small bash script to tar perambulators in packages of configurations
+import conf_utils
 import argument_parsing as ap
 import sys, os, tarfile, re, subprocess
 
@@ -38,28 +39,6 @@ def main():
     # create a list of configs to tar, add one config in the end because python
     cfg_want = ['cnfg%04d' % c for c in range(args.first_config, args.final_config+1,int(d))]
 
-    # Function sorting by digits independent from length
-    def natural_sort(l): 
-      convert = lambda text: int(text) if text.isdigit() else text.lower() 
-      alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ] 
-      return sorted(l, key = alphanum_key)
-
-    # cut a list of configuration based on indices
-    def cut_range(lst, rnge):
-      # the indices pointing to first and last index
-      #TODO: think about list comprehension
-      #e = [i for i,s in enumerate(lst) if]
-      b, e = 0, 0
-      for i, s in enumerate(lst):
-      # s is padded with cnfg, exclude from comparison for identity checking
-        if rnge[0] == s[4:]:
-          b = i
-        if rnge[1] == s[4:]:
-          e = i
-      res = lst[b:e+2]
-      #return res[0::int(rnge[2])]
-      return res[0::2]
-
     # check wether all configurations are there
     # get names
     cfg_have = os.listdir(source_path)
@@ -67,16 +46,16 @@ def main():
     # regular expression containing "cnfg" followed by at least one int
     reg = re.compile(r'cnfg\d+')
     cfgs_reg = filter(reg.match, cfg_have)
-    cfgs_new = natural_sort(cfgs_reg)
+    cfgs_new = conf_utils.natural_sort(cfgs_reg)
 
     # Restrict cfgs_want to the subset we have and print all configurations in 
     # cfg_want but not in cfg_have
-    for c in natural_sort(set(cfg_want) - set(cfg_have)):
+    for c in conf_utils.natural_sort(set(cfg_want) - set(cfg_have)):
       print('Skipping configuration ', c)
     cfgs_cut = set(cfg_want).intersection(cfg_have)
 
     # sort intersection
-    cfgs_tar = natural_sort(cfgs_cut)
+    cfgs_tar = conf_utils.natural_sort(cfgs_cut)
     print('Archiving: ', cfgs_tar)
 
     # chunks for taring
