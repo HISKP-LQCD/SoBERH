@@ -1,3 +1,5 @@
+import re
+
 # Function sorting by digits independent from length
 def natural_sort(l): 
   convert = lambda text: int(text) if text.isdigit() else text.lower() 
