@@ -7,8 +7,8 @@ import logging
 import datetime
 
 # global definitions
-global_path = "/hiskp4/werner/"
-lat = "A60.24"
+global_path = "/hiskp4/perambulators/nf211/"
+lat = "A30.32"
 verbose = 1
 # enable log file
 now = datetime.datetime.now().strftime("%Y%m%d_%H%M")
@@ -278,11 +278,11 @@ def main():
 
     print("###################################")
     ## strange quarks
-    #flavor_moving(npath, matchstrange, "strange", "s")
+    flavor_moving(npath, matchstrange, "strange", "s")
 
     print("###################################")
     ## charm quarks
-    flavor_moving(npath, matchcharm, "charm", "c")
+    #flavor_moving(npath, matchcharm, "charm", "c")
 
 if __name__ == "__main__":
     try:

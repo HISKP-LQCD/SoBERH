@@ -15,6 +15,9 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument("--parent", type=str, 
+                    help="Path to parent directory", required=False,
+                    default='./')
 parser.add_argument("--first_config", type=int, 
                     help="Number of first gauge configuration", required=True)
 parser.add_argument("--delta_config", type=int, 
@@ -40,6 +43,8 @@ parser.add_argument("--dil_ev", type=int,
 parser.add_argument("--missing_config", type=int, nargs="*", default = [])
 
 args = parser.parse_args()
+
+parent = args.parent
 
 srt_cnfg = args.first_config
 del_cnfg = args.delta_config
@@ -86,7 +91,7 @@ for i in range(srt_cnfg, end_cnfg+1, del_cnfg):
   if i in missing_cnfg:
     continue
   for j in range(nb_rnd_vec):
-    path = './cnfg%04d' % i + '/rnd_vec_%02d' % j
+    path = parent +'./cnfg%04d' % i + '/rnd_vec_%02d' % j
     print 'check path: ' + path
 
     # checking the perambulator
