@@ -45,7 +45,7 @@ def arg_parser():
                             help="Remote archival path, the ensemble and flavour names will be appended. Default: %(default)s", 
                             default="/arch/hch02/hch026/LapH_perambulators/")
 
-    if progname == "archive_eigsys.py":
+    if progname == "archive_eigsys.py" or progname == "check_eigsys_v2.py":
         parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)
         parser.add_argument("--Ls", type=int, help="Spatial extent of ensemble", required=True)
         parser.add_argument("--Nev", type=int, help="Number of LapH eigenvectors per time slice", required=True)
