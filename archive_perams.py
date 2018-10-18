@@ -85,7 +85,7 @@ def main():
         arclist.append(arcname)
       else:  
       # on the fly archival to save space
-        rsync_args=['rsync', arcname, remote_user+'@'+remote_host+':'+remote_path]
+        rsync_args=['rsync','--progress', arcname, remote_user+'@'+remote_host+':'+remote_path]
         rval=subprocess.call(rsync_args)
         # delete file if rsync was successful
         if rval == 0:
@@ -94,7 +94,7 @@ def main():
     ## Rsync perambulator archive to destination
     if otf is False:
       for name in arclist:
-        rsync_args=['rsync', name, remote_user+'@'+remote_host+':'+remote_path]
+        rsync_args=['rsync','--progress', name, remote_user+'@'+remote_host+':'+remote_path]
         subprocess.call(rsync_args)
 
 if __name__ == "__main__":

@@ -133,7 +133,7 @@ def main():
     print("Archiving complete. To transfer archive files change to %s and run:" %(work_path))
     print("ls | grep tar > transfer.txt")
     print("and afterwards:")
-    print("rsync -v --files-from=include.txt ./ %s@%s:%s > transfer.log " %(remote_user,remote_host,remote_path))
+    print("rsync -v --progress --files-from=include.txt ./ %s@%s:%s > transfer.log " %(remote_user,remote_host,remote_path))
     #subprocess.call(rsync_args)
     # delete transfer file
 if __name__ == "__main__":
