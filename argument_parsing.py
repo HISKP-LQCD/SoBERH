@@ -44,6 +44,9 @@ def arg_parser():
         parser.add_argument("--remote_path", 
                             help="Remote archival path, the ensemble and flavour names will be appended. Default: %(default)s", 
                             default="/arch/hch02/hch026/LapH_perambulators/")
+        parser.add_argument("--rsync_opts", 
+                            help="Optional arguments for rsync (e.g. --progress): %(default)s", 
+                            default="")
 
     if progname == "archive_eigsys.py" or progname == "check_eigsys_v2.py":
         parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)

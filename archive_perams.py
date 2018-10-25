@@ -24,6 +24,8 @@ def main():
     work_path = args.work_path
     remote_path = args.remote_path
 
+    rsync_opts = args.rsync_opts
+
     # Set default for work_path and remote_path depending on ens and flv
     work_path=work_path+'/'+ens+'/'+flv+'/'
     try:
@@ -85,7 +87,7 @@ def main():
         arclist.append(arcname)
       else:  
       # on the fly archival to save space
-        rsync_args=['rsync','--progress', arcname, remote_user+'@'+remote_host+':'+remote_path]
+        rsync_args=['rsync',rsync_opts, arcname, remote_user+'@'+remote_host+':'+remote_path]
         rval=subprocess.call(rsync_args)
         # delete file if rsync was successful
         if rval == 0:
@@ -94,7 +96,7 @@ def main():
     ## Rsync perambulator archive to destination
     if otf is False:
       for name in arclist:
-        rsync_args=['rsync','--progress', name, remote_user+'@'+remote_host+':'+remote_path]
+        rsync_args=['rsync',rsync_opts, name, remote_user+'@'+remote_host+':'+remote_path]
         subprocess.call(rsync_args)
 
 if __name__ == "__main__":
