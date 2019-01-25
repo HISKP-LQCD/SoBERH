@@ -43,7 +43,7 @@ def arg_parser():
                             default="/hiskp4/peram_vault/")
         parser.add_argument("--remote_path", 
                             help="Remote archival path, the ensemble and flavour names will be appended. Default: %(default)s", 
-                            default="/arch/hch02/hch026/LapH_perambulators/")
+                            default="/arch2/hbn28/project/sLapH_perambulators/")
         parser.add_argument("--rsync_opts", 
                             help="Optional arguments for rsync (e.g. --progress): %(default)s", 
                             default="")
@@ -58,12 +58,12 @@ def arg_parser():
                             default="/hiskp4/eigsys_vault/")
         parser.add_argument("--remote_path", 
                             help="Remote archival path, the ensemble name will be appended. Default: %(default)s", 
-                            default="/arch/hch02/hch026/helmes/eigensystems/")
+                            default="/arch2/hbn28/project/eigensystems/")
     
     parser.add_argument("--source_path", help="Path to data locally", required=True)
     
     # Setting the login information for Juelich. Please ensure access permission
-    parser.add_argument("--remote_user", help="Name of user to log onto archive Default: %(default)s", default="hch026")
+    parser.add_argument("--remote_user", help="Name of user to log onto archive ", required=True)
     parser.add_argument("--remote_host", help="Name of host to log onto archive Default: %(default)s", default="judac")
     
 
