@@ -8,7 +8,7 @@ import datetime
 
 # global definitions
 global_path = "/hiskp4/perambulators/nf211/"
-lat = "A30.32"
+lat = "A40.24"
 verbose = 1
 # enable log file
 now = datetime.datetime.now().strftime("%Y%m%d_%H%M")
@@ -274,7 +274,7 @@ def main():
     print("###################################")
 
     ## light quarks
-    #flavor_moving(npath, matchlight, "light", "u")
+    flavor_moving(npath, matchlight, "light", "u")
 
     print("###################################")
     ## strange quarks
@@ -282,7 +282,7 @@ def main():
 
     print("###################################")
     ## charm quarks
-    #flavor_moving(npath, matchcharm, "charm", "c")
+    flavor_moving(npath, matchcharm, "charm", "c")
 
 if __name__ == "__main__":
     try:
