@@ -6,7 +6,6 @@ import sys, os, tarfile, re, subprocess
 def main():
     parser = ap.arg_parser()
     args = parser.parse_args()
-    ens = args.ens
 
     source_path = args.source_path
     # configuration numbers
