@@ -51,6 +51,10 @@ def arg_parser():
                             default="")
 
     if progname == "archive_eigsys.py" or progname == "check_eigsys_v2.py":
+        parser.add_argument("--otf", help="Perform transfer 'on the fly', piping the output of the tar command directly to ssh.",
+                            dest="otf", 
+                            action="store_true",
+                            default=False)
         parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)
         parser.add_argument("--Ls", type=int, help="Spatial extent of ensemble", required=True)
         parser.add_argument("--Nev", type=int, help="Number of LapH eigenvectors per time slice", required=True)

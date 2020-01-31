@@ -4,6 +4,7 @@
 import argument_parsing as ap
 import conf_utils
 import sys, os, tarfile, re, subprocess
+from subprocess import PIPE
 
 def calc_arcsize(t, l, nev, nconf=None):
     evecs_ts = nev*l**3*3*2*8
@@ -22,7 +23,7 @@ def cmp_sizes(arcpath,size,push,pop):
         push.append(arcpath.split('/')[-1])
     else:
         print("\nEigensystem archive %s has wrong size:" %arcpath)
-        print("Should be %d bytes" %size)
+        print("Should be: %d bytes" %size)
         print("Instead is: %d bytes" %os.path.getsize(arcpath))
         # make shure to only append filename
         pop.append(arcpath.split('/')[-1])
@@ -40,6 +41,8 @@ def main():
     source_path = args.source_path
     work_path = args.work_path
     remote_path = args.remote_path
+
+    otf = args.otf
 
     # user may provide list of configs to be skipped which we parse here
     skip_configs = []
@@ -103,10 +106,12 @@ def main():
         chunk_end = chunk[-1]
     
         arcsize=calc_arcsize(time,length,nev, len(range(chunk_start,chunk_end+1,dst)) )
-
-        arcname=work_path+'/eigsys_%04d-%d-%04d'%(chunk_start,dst,chunk_end)+'.tar'
+        
+        arcname='eigsys_%04d-%d-%04d'%(chunk_start,dst,chunk_end)+'.tar'
+        arc_workpath=work_path+'/'+arcname
         if chunksize == 1:
-            arcname=work_path+'/eigsys_%04d'%(chunk_start)+'.tar'
+            arcname='eigsys_%04d'%(chunk_start)+'.tar'
+            arc_workpath=work_path+'/'+arcname
 
         filenames=[]
         for conf_idx in range(chunk_start,chunk_end+1,dst):
@@ -114,28 +119,46 @@ def main():
                 filenames.append('eigenvectors.%04d.%03d' %(conf_idx,ts))
                 filenames.append('eigenvalues.%04d.%03d' %(conf_idx,ts))
                 filenames.append('phases.%04d.%03d' %(conf_idx,ts))
+        
+        # if we're not doing on the fly transfers
+        if otf is False:
+            with tarfile.open(arc_workpath, "w", dereference=True) as tar:
+                for name in filenames:
+                    tar.add(name)
+            cmp_sizes(arc_workpath, arcsize, include, exclude)
 
-        with tarfile.open(arcname, "w", dereference=True) as tar:
-            for name in filenames:
-                tar.add(name)
+        else:
+            remote_tar=remote_path+arcname
+            tar_cmd=['tar', 'cf', ' - '] + filenames + [' | ', 'ssh', remote_user+'@'+remote_host, '"cat > ', remote_tar, '"']
+            # while 'shell' is not necessarily recommened, it seems to be the only way to perform what we would like
+            # to do here...
+            subprocess.run(' '.join(tar_cmd), shell=True)
+            # check if the file that was transferred has the right size
+            # there are of course any number of things that can go wrong here, but let's hope
+            # it works...
+            remote_ls_cmd=['ssh', remote_user+'@'+remote_host, 'ls -l ', remote_tar, ' | ', 'awk "{print \$5}"']
+            out=str(subprocess.check_output(' '.join(remote_ls_cmd), shell=True).strip(), 'ascii')
+            if int(out) < arcsize:
+                print("\nEigensystem archive %s has wrong size:" %(remote_host+':'+remote_path+arcname))
+                print("Should be: %d bytes" %arcsize)
+                print("Instead is: %d bytes" %int(out))
 
-        cmp_sizes(arcname, arcsize, include, exclude)
 
-    # generate a list of eigensystems in vault
-    os.chdir(work_path)
-    transfer=os.listdir(os.getcwd())
-    # save transfer file for rsync
-    with open('include.txt',"a") as inc:
-        inc.write("\n".join(map(lambda x: str(x),include)))
-    with open('exclude.txt',"a") as exc:
-        exc.write("\n".join(map(lambda x: str(x),exclude)))
-    
-    print("Archiving complete. To transfer archive files change to %s and run:" %(work_path))
-    print("ls | grep tar > transfer.txt")
-    print("and afterwards:")
-    print("rsync -v --progress --files-from=include.txt ./ %s@%s:%s > transfer.log " %(remote_user,remote_host,remote_path))
-    #subprocess.call(rsync_args)
-    # delete transfer file
+    if otf is False:
+        # generate a list of eigensystems in vault
+        os.chdir(work_path)
+        transfer=os.listdir(os.getcwd())
+        # save transfer file for rsync
+        with open('include.txt',"a") as inc:
+            inc.write("\n".join(map(lambda x: str(x),include)))
+        with open('exclude.txt',"a") as exc:
+            exc.write("\n".join(map(lambda x: str(x),exclude)))
+        
+        print("Archiving complete. To transfer archive files change to %s and run:" %(work_path))
+        print("ls | grep tar > transfer.txt")
+        print("and afterwards:")
+        print("rsync -v --progress --files-from=include.txt ./ %s@%s:%s > transfer.log " %(remote_user,remote_host,remote_path))
+
 if __name__ == "__main__":
     try:
         main()
