@@ -4,7 +4,6 @@
 import argument_parsing as ap
 import conf_utils
 import sys, os, tarfile, re, subprocess
-from subprocess import PIPE
 
 def calc_arcsize(t, l, nev, nconf=None):
     evecs_ts = nev*l**3*3*2*8
@@ -19,7 +18,7 @@ def cmp_sizes(arcpath,size,push,pop):
     sync = None
     if os.path.getsize(arcpath) >= size:
         print("\nSuccessfully packed %s" %arcpath)
-        # make shure to only append filename
+        # make sure to only append filename
         push.append(arcpath.split('/')[-1])
     else:
         print("\nEigensystem archive %s has wrong size:" %arcpath)
