@@ -1,0 +1,61 @@
+# Small bash script to tar eigensystem in packages of configurations
+#!/bin/bash
+
+# Set the parameters
+# Lattice name
+ens=cA2b.09.48
+# source of the outputs of the contraction code
+OUTPUTDIRECTORY=/p/project/chbn28/fischer1/contractions/nf2/${ens}/outputs/
+# source of the vdaggerv objects
+EIGS=/p/scratch/chbn28/project/vdaggerv/nf2/${ens}/
+# tar locally and then rsync to juelich archive
+ARC=/p/project/chbn28/hbn28d/code/SoBERH/vault
+hyp_smearing=
+add=
+
+# Config range as line numbers from conf_lst.txt, DST is the usual distance
+# between configs
+BGN=1
+# ${END} has to be the number of configs
+END=173
+DST=4
+
+# get all configs in between range into one file
+sed -n ${BGN},${END}p conf_list.txt > conf_range.txt
+
+#for line in 
+#naming stuff all between line 1 and 21
+for line in `seq ${BGN} 25 ${END}`; do
+  C1=$(sed -n ${line}p conf_range.txt)
+  next=$((${line}+24))
+  C2=$(sed -n ${next}p conf_range.txt)
+  if [ ${next} -gt 614 ] ; then
+    C2=2696
+  fi
+  echo ${C1}
+  echo ${C2}
+# Setting target path for archive and rsync destination
+  HOST=judac
+  SRC=${ARC}/vdaggerv_${C1}-${DST}-${C2}.tar
+# Now we want to tar everything in the range list into one specific tar archive
+  echo "-C$EIGS" > file_list3.txt
+  for n in `seq ${C1} 4 ${C2} | awk '{printf("%04d\n",$1);}'`; do # $(cat conf_range.txt | head -n1); do
+    echo ${n}
+    for t in {000..95}; do
+      for p in $( cat momlist ); do
+        echo cnfg$n/operators.${n}.p_${p}_${t} >> file_list3.txt
+      done
+    done
+  done
+  echo "-C${OUTPUTDIRECTORY}" >>file_list3.txt
+  ls ${OUTPUTDIRECTORY}/ >>file_list3.txt
+
+  tar cvf ${SRC} --wildcards --files-from file_list3.txt
+
+  Rsync eigensystem archive to destination
+  cp  ${SRC} /arch2/hbn28/project/vdaggerv/nf2/${ens}/
+  rm ${SRC}
+#  Tidy up!
+  rm file_list3.txt
+# rm conf_range.txt
+done
