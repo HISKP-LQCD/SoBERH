@@ -7,6 +7,7 @@ def arg_parser():
     
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--source_path", help="Path to data locally", required=True)
     parser.add_argument("--first_config", type=int, help="Number of first gauge configuration", required=True)
     parser.add_argument("--delta_config", type=int, help="Number of  gauge configuration distance", required=True)
     parser.add_argument("--final_config", type=int, help="Number of last gauge configuration", required=True)
@@ -50,16 +51,11 @@ def arg_parser():
                             help="Optional arguments for rsync (e.g. --progress): %(default)s", 
                             default="")
 
-    if progname == "archive_eigsys.py" or progname == "check_eigsys_v2.py":
+    if progname == "archive_eigsys.py":
         parser.add_argument("--otf", help="Perform transfer 'on the fly', piping the output of the tar command directly to ssh.",
                             dest="otf", 
                             action="store_true",
                             default=False)
-        parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)
-        parser.add_argument("--Ls", type=int, help="Spatial extent of ensemble", required=True)
-        parser.add_argument("--Nev", type=int, help="Number of LapH eigenvectors per time slice", required=True)
-
-    if progname == "archive_eigsys.py":
         parser.add_argument("--work_path", 
                             help=("Path in which the .tar files will be created locally, "
                                   "the ensemble name will be appended. Default: %(default)s"),
@@ -67,9 +63,11 @@ def arg_parser():
         parser.add_argument("--remote_path", 
                             help="Remote archival path, the ensemble name will be appended. Default: %(default)s", 
                             default="/arch2/hbn28/project/eigensystems/")
-    
-    parser.add_argument("--source_path", help="Path to data locally", required=True)
-    
-    
+
+    if progname == "archive_eigsys.py" or progname == "check_eigsys_v2.py":
+        parser.add_argument("--Lt", type=int, help="Time extent of ensemble", required=True)
+        parser.add_argument("--Ls", type=int, help="Spatial extent of ensemble", required=True)
+        parser.add_argument("--Nev", type=int, help="Number of LapH eigenvectors per time slice", required=True)
+
     return parser
 
