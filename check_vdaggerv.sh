@@ -14,8 +14,8 @@ conf_end=701
 size_expected=6969600
 nfiles_expected=1536
 
-echo > incomplete_files.txt
-echo > incomplete_confs.txt
+echo -n > incomplete_files.txt
+echo -n > incomplete_confs.txt
 
 for cid in $(seq $conf_start $conf_step $conf_end); do
   cid4=$(printf %04d $cid)
